@@ -4,6 +4,7 @@ import numpy as np
 import validators
 from util import code_analysis, auth
 from streamlit_extras.dataframe_explorer import dataframe_explorer
+from streamlit_extras.metric_cards import style_metric_cards
 
 # page title
 st.title('Code Analysis')
@@ -28,6 +29,12 @@ data_load_state = st.text('Loading data...')
 data1, data2 = load_data(user_input)
 # Notify the reader that the data was successfully loaded.
 data_load_state.text("Done! (using st.cache_data)")
+
+col1, col2, col3 = st.columns(3)
+col1.metric(label="Lines of Code", value=data1['loc'].sum())
+col2.metric(label="Logical Lines of Code", value=data1['lloc'].sum())
+col3.metric(label="Source Lines of Code", value=data1['sloc'].sum())
+style_metric_cards()
 
 # table
 #if st.checkbox('Show table with raw data'):

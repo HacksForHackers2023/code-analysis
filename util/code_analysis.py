@@ -22,7 +22,6 @@ def repo_parser(repo_url, is_update):
     if is_update:
         link = REPOS + urlparse(repo_url).path + '/contents/'
     try:
-        print(f'🌏 {link}')
         req = Request(link, headers={'Authorization': f'Bearer {auth.get_token()}'})
         print(req.data)
         file = urlopen(req)
@@ -43,7 +42,6 @@ def code_complexity(url, repo_url):
     dir = '/'.join(name.split('/')[:-1])
     output_func = []
     a = repo_url + '/blob/' + name
-    print(f'👇 {a}')
     req = Request(url, headers={'Authorization': f'{auth.get_token()}'})
     with urlopen(req) as file:
         try:
@@ -100,7 +98,6 @@ def walker(data, repo_url):
             output_overall.append(result[0])
             output_func.extend(result[1])
         if d['type'] == 'dir':
-            print('👋')
             arr = repo_parser(d['url'], False)
             q.extend(arr)
 
@@ -112,4 +109,5 @@ def stats(repo_url):
     output_data = walker(data, repo_url)
     df_overall = pd.DataFrame(output_data[0])
     df_func = pd.DataFrame(output_data[1])
+    print(df_overall)
     return df_overall, df_func
