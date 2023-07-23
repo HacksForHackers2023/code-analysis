@@ -100,23 +100,24 @@ col1, col2 = st.columns(2)
 col1.metric(label="Percentage of locations listed as 'online'", value=f'{percentage_online:.2f}%', delta="")
 style_metric_cards()
 
-#############################
+# #############################
+# st.subheader('Word Cloud of Hackathon Organizers')
 
-# Filter out rows with NaN values in the 'organizer' column
-filtered_df = filtered_df.dropna(subset=['organizer'])
+# # Filter out rows with NaN values in the 'organizer' column
+# filtered_df = filtered_df.dropna(subset=['organizer'])
 
-# Extract the 'organizer' column as text data
-text_data_organizer = ",".join(filtered_df['organizer'])
+# # Extract the 'organizer' column as text data
+# text_data_organizer = ",".join(filtered_df['organizer'])
 
-# Create a WordCloud object
-wordcloud = WordCloud(width=800, height=400, background_color='white').generate(text_data_organizer)
+# # Create a WordCloud object
+# wordcloud = WordCloud(width=800, height=400, background_color='white').generate(text_data_organizer)
 
-# Display the generated word cloud using matplotlib
-fig3 = plt.figure(figsize=(10, 5))
-plt.imshow(wordcloud, interpolation='bilinear')
-plt.axis("off")
+# # Display the generated word cloud using matplotlib
+# fig3 = plt.figure(figsize=(10, 5))
+# plt.imshow(wordcloud, interpolation='bilinear')
+# plt.axis("off")
 
-st.pyplot(fig3)
+# st.pyplot(fig3)
 
 #############################
 
