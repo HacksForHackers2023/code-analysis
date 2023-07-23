@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
+import numpy as np
 from wordcloud import WordCloud
 from streamlit_extras.dataframe_explorer import dataframe_explorer
 from streamlit_extras.metric_cards import style_metric_cards
@@ -180,8 +181,6 @@ st.dataframe(df2, use_container_width=True,
 
 #############################
 
-# import nltk
-from nltk.probability import FreqDist
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 
@@ -221,3 +220,50 @@ st.pyplot(fig6)
 st.markdown('''
 The word cloud above shows the most common tags used by MLH in their hackathons.
 ''')
+
+#############################   
+
+# Group the DataFrame by 'year' and count the occurrences
+hackathons_per_year = MajorLeagueHacking_df['year'].value_counts().sort_index()
+
+# Create the bar chart
+fig7 = plt.figure(figsize=(8, 6))
+hackathons_per_year.plot(kind='bar', color='purple')
+plt.xlabel('Year')
+plt.ylabel('Number of Hackathons')
+plt.title('Number of Hackathons Per Year')
+plt.xticks(rotation=45)
+plt.grid(axis='y', linestyle='--', alpha=0.7)
+
+st.pyplot(fig7)
+
+#############################
+
+# Group the DataFrame by 'year' and 'month' and calculate the average participants per hackathon
+avg_participants_per_month = MajorLeagueHacking_df.groupby(['year', 'month'])['participants'].mean().reset_index()
+
+# Create a pivot table to rearrange the data for better visualization
+pivot_table = avg_participants_per_month.pivot(index='month', columns='year', values='participants')
+
+# Get the months in the correct order
+sorted_months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+# Reindex the pivot table with the sorted months
+pivot_table = pivot_table.reindex(sorted_months)
+
+# Replace the data for Dec 2023 with NaN
+pivot_table.loc['Dec', 2023] = np.nan
+
+# Plot the line graph
+fig8 = plt.figure(figsize=(10, 6))
+for year in pivot_table.columns:
+    plt.plot(pivot_table.index, pivot_table[year], label=str(year))
+
+plt.xlabel('Month')
+plt.ylabel('Average Participants')
+plt.title('Average Participants per Month for Each Year')
+plt.legend(title='Year', loc='upper left', bbox_to_anchor=(1, 1))
+plt.xticks(rotation=45)
+plt.grid(True) 
+
+st.pyplot(fig8)
