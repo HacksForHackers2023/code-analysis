@@ -7,7 +7,7 @@ from streamlit_extras.metric_cards import style_metric_cards
 
 st.title('Hackathons Data Visualization <3')
 
-df = pd.read_csv('data\hackathons.csv')
+df = pd.read_csv('data/hackathons.csv')
 
 df1 = dataframe_explorer(df, case=False)
 st.dataframe(df1, use_container_width=True,

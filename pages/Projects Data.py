@@ -8,7 +8,7 @@ from streamlit_extras.metric_cards import style_metric_cards
 
 st.title('Projects Data Visualization 🫰')
 
-df = pd.read_csv('data\projects.csv')
+df = pd.read_csv('data/projects.csv')
 
 
 # Use boolean indexing to filter out rows where the 'win' column contains {} or the substring '[]'
@@ -72,3 +72,9 @@ for word, freq in sorted_word_freq.items():
     i += 1
     if i > 15: break
     print(f"{word}: {freq}")
+
+
+#######################
+
+# Filter rows with values containing the phrases "Place" or "Runner Up" in the 'prizeNames' column
+filtered_df3 = filtered_df[filtered_df['prizeNames'].str.contains('Place|Runner Up', na=False)]
