@@ -12,12 +12,11 @@ df = pd.read_csv('data/hackathons.csv')
 df1 = dataframe_explorer(df, case=False)
 st.dataframe(df1, use_container_width=True,
              column_config={
-                 "link": st.column_config.LinkColumn("link")
+                 "link": st.column_config.LinkColumn("hackathon_link")
              }, hide_index=True)
 
 st.subheader('Word Cloud of Hackathon Tags')
 
-# Assuming you have a DataFrame called 'df' with the 'tags' column
 # Filter out NaN values from the 'tags' column
 filtered_df = df.dropna(subset=['tags'])
 
@@ -69,14 +68,12 @@ df_noNan = df.dropna(how='any')
 # Create a copy of the DataFrame
 df_noNan2 = df_noNan.copy()
 
-# Assuming you have a DataFrame called 'df' with the 'price', 'participants', and 'currency' columns
-
 # Filter out rows with currency values equal to "$"
 filtered_df = filtered_df[filtered_df['currency'] == '$']
 
 # Draw a scatter plot of 'price' against 'participants'
 fig2 = plt.figure(figsize=(8, 6))
-plt.scatter(filtered_df['participants'], filtered_df['price'], alpha=0.5)
+plt.scatter(filtered_df['participants'], filtered_df['price'], alpha=0.5, color='#9370DB')
 plt.xlabel('Participants')
 plt.ylabel('Price')
 plt.title('Scatter Plot: Price vs Participants (Currency: $)')
@@ -89,8 +86,6 @@ st.pyplot(fig2)
 
 import pandas as pd
 
-# Assuming you have a DataFrame called 'df' with the 'location' column
-
 # Calculate the total number of rows in the DataFrame
 total_rows = len(df)
 
@@ -100,13 +95,12 @@ online_count = df['location'].str.lower().str.contains('online').sum()
 # Calculate the percentage of locations that are listed as "online"
 percentage_online = (online_count / total_rows) * 100
 
-col1, col2, col3 = st.columns(3)
+col1, col2 = st.columns(2)
 col1.metric(label="Percentage of locations listed as 'online'", value=f'{percentage_online:.2f}%', delta="")
 style_metric_cards()
 
 #############################
 
-# Assuming you have a DataFrame called 'df' with the 'organizer' column
 # Filter out rows with NaN values in the 'organizer' column
 filtered_df = filtered_df.dropna(subset=['organizer'])
 
@@ -122,3 +116,21 @@ plt.imshow(wordcloud, interpolation='bilinear')
 plt.axis("off")
 
 st.pyplot(fig3)
+
+#############################
+
+# Extract the first 3 letters of each period as the month and create a new column 'month'
+filtered_df['month'] = filtered_df['period'].str[:3]
+
+custom_order = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+# Create a histogram of the extracted months
+fig4 = plt.figure(figsize=(8, 6))
+filtered_df['month'].value_counts().reindex(custom_order).plot(kind='bar', color='purple')
+plt.xlabel('Month')
+plt.ylabel('Frequency')
+plt.title('Hackaathons each month')
+plt.xticks(rotation=0)
+plt.show()
+
+st.pyplot(fig4)
