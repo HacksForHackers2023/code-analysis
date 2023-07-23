@@ -75,7 +75,7 @@ filtered_df = filtered_df[filtered_df['currency'] == '$']
 fig2 = plt.figure(figsize=(8, 6))
 plt.scatter(filtered_df['participants'], filtered_df['price'], alpha=0.5, color='#9370DB')
 plt.xlabel('Participants')
-plt.ylabel('Price')
+plt.ylabel('Prize pool')
 plt.title('Scatter Plot: Price vs Participants (Currency: $)')
 plt.show()
 
@@ -119,6 +119,8 @@ st.pyplot(fig3)
 
 #############################
 
+st.subheader('Hackathons through the years')
+
 # Extract the first 3 letters of each period as the month and create a new column 'month'
 filtered_df['month'] = filtered_df['period'].str[:3]
 
@@ -129,8 +131,93 @@ fig4 = plt.figure(figsize=(8, 6))
 filtered_df['month'].value_counts().reindex(custom_order).plot(kind='bar', color='purple')
 plt.xlabel('Month')
 plt.ylabel('Frequency')
-plt.title('Hackaathons each month')
+plt.title('Hackathons each month')
 plt.xticks(rotation=0)
-plt.show()
 
 st.pyplot(fig4)
+
+#############################
+
+# Extract the year from the 'period' column and convert it to an integer column 'year'
+filtered_df['year'] = filtered_df['period'].str[-4:].astype(int)
+
+#############################
+
+# Group the DataFrame by 'year' and 'month' and count the occurrences
+hackathons_count = filtered_df.groupby(['year', 'month']).size().reset_index(name='count')
+
+# Create a pivot table to rearrange the data for plotting
+pivot_table = hackathons_count.pivot(index='month', columns='year', values='count')
+
+# Get the sorted months to display on the x-axis in order
+sorted_months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+# Plot the line graph
+fig5 = plt.figure(figsize=(10, 6))
+for year in pivot_table.columns:
+    plt.plot(sorted_months, pivot_table[year], label=str(year))
+
+plt.xlabel('Month')
+plt.ylabel('Number of Hackathons')
+plt.title('Number of Hackathons Each Month')
+plt.legend(title='Year', loc='upper left', bbox_to_anchor=(1, 1))
+plt.xticks(rotation=45)
+plt.grid(True)
+
+st.pyplot(fig5)
+
+#############################
+
+st.subheader('Major League Hacking Hackathons')
+
+MajorLeagueHacking_df = filtered_df[(filtered_df['organizer'] == 'Major League Hacking')]
+
+df2 = dataframe_explorer(MajorLeagueHacking_df, case=False)
+st.dataframe(df2, use_container_width=True,
+             column_config={
+                 "link": st.column_config.LinkColumn("hackathon_link")
+             }, hide_index=True)
+
+#############################
+
+# import nltk
+from nltk.probability import FreqDist
+from wordcloud import WordCloud
+import matplotlib.pyplot as plt
+
+# Extract the 'tags' column as text data
+text_data_mlh = ",".join(MajorLeagueHacking_df['tags'])
+
+# Tokenize the text data into words
+words = text_data_mlh.split(' ')
+
+# Calculate the frequency of each word
+word_freq = {}
+for word in words:
+    word_freq[word] = word_freq.get(word, 0) + 1
+
+# Sort the words based on frequency and get the 10 most frequent words to remove
+top_words = sorted(word_freq, key=word_freq.get, reverse=True)[:10]
+
+# Remove the top 10 most frequent words from the list of words
+filtered_words = [word for word in words if word not in top_words]
+
+# Join the filtered words back into a single text
+filtered_text = " ".join(filtered_words)
+
+# Generate the word cloud from the filtered text
+wordcloud = WordCloud(width=800, height=400, background_color='white').generate(filtered_text)
+
+# Plot the word cloud
+fig6 = plt.figure(figsize=(10, 5))
+plt.imshow(wordcloud, interpolation='bilinear')
+plt.axis('off')
+plt.title('MLH Tags Word Cloud')
+plt.show()
+
+st.pyplot(fig6)
+
+# Note as markdown
+st.markdown('''
+The word cloud above shows the most common tags used by MLH in their hackathons.
+''')
